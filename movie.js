@@ -1,75 +1,80 @@
-
+// Initialize an array to hold movie objects
 let movieCollection = [];
+
+// Function to add a new movie to the collection
 function addMovie() {
     const title = document.getElementById('title').value;
     const genre = document.getElementById('genre').value;
     const rating = parseFloat(document.getElementById('rating').value);
     const year = parseInt(document.getElementById('year').value);
 
-    if (!title || !genre || isNaN(rating) || isNaN(year)) {
-        alert('Please fill in all fields.');
-        return;
+    if (title && genre && !isNaN(rating) && !isNaN(year)) {
+        const movie = { title, genre, rating, year };
+        movieCollection.push(movie);
+        alert('Movie added successfully!');
+        clearInputs();
+    } else {
+        alert('Please fill in all fields correctly.');
     }
+}
 
-    const newMovie = {
-        title,
-        genre,
-        rating,
-        year
-    };
-
-    movieCollection.push(newMovie);
+// Function to clear input fields after adding a movie
+function clearInputs() {
     document.getElementById('title').value = '';
     document.getElementById('genre').value = '';
     document.getElementById('rating').value = '';
     document.getElementById('year').value = '';
-
-    displayMovies();
-    displayActionMovies();
-    displayHighestRatedMovie();
-    displayMoviesAfter2000();
-    displayMovieTitles();
 }
 
-function displayMovies() {
-    const movieListDiv = document.getElementById('moviesList');
-    movieListDiv.innerHTML = '';
+// Function to list all movies
+function listMovies() {
+    const output = document.getElementById('movie-list');
+    output.innerHTML = ''; // Clear previous list
     movieCollection.forEach(movie => {
-        const movieDiv = document.createElement('div');
-        movieDiv.innerHTML = `<p><strong>Title:</strong> ${movie.title} <strong>Genre:</strong> ${movie.genre} <strong>Rating:</strong> ${movie.rating} <strong>Year:</strong> ${movie.year}</p>`;
-        movieListDiv.appendChild(movieDiv);
-    });
-}
-function displayActionMovies() {
-    const actionMovies = movieCollection.filter(movie => movie.genre.toLowerCase() === 'action');
-    const actionMoviesDiv = document.getElementById('actionMovies');
-    actionMoviesDiv.innerHTML = '';
-    actionMovies.forEach(movie => {
-        const movieDiv = document.createElement('div');
-        movieDiv.innerHTML = `<p>${movie.title} (${movie.year})</p>`;
-        actionMoviesDiv.appendChild(movieDiv);
+        const listItem = document.createElement('li');
+        listItem.textContent = `${movie.title} - ${movie.genre} - Rating: ${movie.rating} - Year: ${movie.year}`;
+        output.appendChild(listItem);
     });
 }
 
-function displayHighestRatedMovie() {
-    const highestRated = movieCollection.reduce((max, movie) => movie.rating > max.rating ? movie : max, { rating: 0 });
-    const highestRatedDiv = document.getElementById('highestRated');
-    highestRatedDiv.innerHTML = `<p><strong>Title:</strong> ${highestRated.title} <strong>Rating:</strong> ${highestRated.rating}</p>`;
+// Function to list movies by a specific genre
+function listMoviesByGenre() {
+    const genre = prompt('Enter the genre to filter by:');
+    const filteredMovies = movieCollection.filter(movie => movie.genre.toLowerCase() === genre.toLowerCase());
+    displayMovies(filteredMovies);
 }
 
-function displayMoviesAfter2000() {
-    const after2000Movies = movieCollection.filter(movie => movie.year > 2000);
-    const after2000Div = document.getElementById('after2000');
-    after2000Div.innerHTML = '';
-    after2000Movies.forEach(movie => {
-        const movieDiv = document.createElement('div');
-        movieDiv.innerHTML = `<p>${movie.title} (${movie.year})</p>`;
-        after2000Div.appendChild(movieDiv);
-    });
+// Function to find the highest-rated movie
+function findHighestRated() {
+    const highestRated = movieCollection.reduce((max, movie) => (movie.rating > max.rating ? movie : max), movieCollection[0]);
+    const output = document.getElementById('movie-list');
+    output.innerHTML = `<li>The highest rated movie is: ${highestRated.title} with a rating of ${highestRated.rating}</li>`;
 }
 
-function displayMovieTitles() {
-    const movieTitles = movieCollection.map(movie => movie.title);
-    const movieTitlesDiv = document.getElementById('movieTitles');
-    movieTitlesDiv.innerHTML = `<p>${movieTitles.join(', ')}</p>`;
+// Function to list movies released after a specific year
+function listMoviesAfterYear() {
+    const year = parseInt(prompt('Enter the year to filter movies released after:'));
+    const filteredMovies = movieCollection.filter(movie => movie.year > year);
+    displayMovies(filteredMovies);
+}
+
+// Helper function to display movies in the output area
+function displayMovies(movies) {
+    const output = document.getElementById('movie-list');
+    output.innerHTML = ''; // Clear previous list
+    if (movies.length > 0) {
+        movies.forEach(movie => {
+            const listItem = document.createElement('li');
+            listItem.textContent = `${movie.title} - ${movie.genre} - Rating: ${movie.rating} - Year: ${movie.year}`;
+            output.appendChild(listItem);
+        });
+    } else {
+        output.innerHTML = '<li>No movies found.</li>';
+    }
+}
+
+// Example of using map() to create a list of all movie titles
+function getMovieTitles() {
+    const titles = movieCollection.map(movie => movie.title);
+    console.log('Movie Titles:', titles.join(', '));
 }
